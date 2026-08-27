@@ -1,0 +1,88 @@
+# Non-localized command help, usage, and results. All messages support MiniMessage formatting.
+command:
+  root:
+    # Available placeholder: <version>
+    version: "<gold>Maintenance v<version>"
+    # Available placeholder: <label>
+    help-hint: "<yellow>Use /<label> help for available commands."
+
+  help:
+    # Available placeholder: <label>
+    - "<gold>Maintenance commands:"
+    - "<gray>/<label> status - Show the current schedule or maintenance mode status."
+    - "<gray>/<label> on - Enable maintenance mode."
+    - "<gray>/<label> off - Disable maintenance mode and cancel its schedule."
+    - "<gray>/<label> reload - Reload the configuration, language, and whitelist."
+    - '<gray>/<label> schedule \<start> \<end|duration> - Schedule maintenance.'
+    - "<gray>/<label> schedule status - Show the current schedule."
+    - "<gray>/<label> schedule cancel - Cancel the schedule and disable maintenance."
+    - '<gray>/<label> whitelist add \<player> - Add a player to the whitelist.'
+    - '<gray>/<label> whitelist remove \<player> - Remove a player from the whitelist.'
+    - "<gray>/<label> whitelist list - List whitelisted players."
+
+  usage:
+    # Available placeholder: <label>
+    help: "<yellow>Usage: /<label> help"
+    status: "<yellow>Usage: /<label> status"
+    "on": "<yellow>Usage: /<label> on"
+    "off": "<yellow>Usage: /<label> off"
+    reload: "<yellow>Usage: /<label> reload"
+    schedule: '<yellow>Usage: /<label> schedule \<start> \<end|duration>'
+    schedule-status: "<yellow>Usage: /<label> schedule status"
+    schedule-cancel: "<yellow>Usage: /<label> schedule cancel"
+    whitelist: '<yellow>Usage: /<label> whitelist \<add|remove|list>'
+    whitelist-add: '<yellow>Usage: /<label> whitelist add \<player>'
+    whitelist-remove: '<yellow>Usage: /<label> whitelist remove \<player>'
+    whitelist-list: "<yellow>Usage: /<label> whitelist list"
+  additional-arguments: "<red>This command does not accept additional arguments."
+  too-many-arguments: "<red>Too many arguments."
+  unknown-subcommand: "<red>Unknown subcommand: <input>"
+
+  reload:
+    success: "<green>Maintenance configuration reloaded."
+    failure: "<red>Unable to reload maintenance configuration. Check the server console."
+
+  status:
+    enabled: "<gold>Maintenance mode is enabled."
+    disabled: "<gold>Maintenance mode is disabled."
+
+  toggle:
+    schedule-cancelled: "<yellow>Maintenance schedule cancelled."
+    enabled: "<green>Maintenance mode enabled."
+    disabled: "<green>Maintenance mode disabled."
+    already-enabled: "<yellow>Maintenance mode is already enabled."
+    already-disabled: "<yellow>Maintenance mode is already disabled."
+
+  schedule:
+    missing-times: "<red>Missing maintenance start and end time."
+    missing-end: "<red>Missing maintenance end time or duration."
+    invalid-start: "<red>Invalid start time. Use ISO-8601, an hour like 9 or 09, HH:mm, now, or now+d/h/m like now+1h30m. Seconds are not allowed."
+    invalid-end: "<red>Invalid end time. Use ISO-8601, an hour like 9 or 09, HH:mm, or a d/h/m duration like 1h30m. Seconds are not allowed."
+    end-before-start: "<red>The maintenance end time must be after its start time."
+    end-not-future: "<red>The maintenance end time must be in the future."
+    # Available placeholders: <schedule_start> and <schedule_end>
+    created: "<green>Maintenance scheduled from <schedule_start> to <schedule_end>."
+    none: "<yellow>No maintenance is scheduled."
+    # Available placeholders: <schedule_start> and <schedule_end>
+    status-pending: "<gold>Maintenance schedule (pending): <schedule_start> to <schedule_end>."
+    status-active: "<gold>Maintenance schedule (active): <schedule_start> to <schedule_end>."
+    cancelled-and-disabled: "<green>Maintenance schedule cancelled and maintenance mode disabled."
+
+  whitelist:
+    missing-subcommand: "<red>Missing whitelist subcommand."
+    # Available placeholder: <input>
+    unknown-subcommand: "<red>Unknown whitelist subcommand: <input>"
+    missing-player: "<red>Missing player name."
+    # Available placeholder: <player>
+    invalid-player: "<red>Invalid player name: <player>"
+    looking-up: "<gray>Looking up player <player>..."
+    lookup-failed: "<red>Unable to look up player <player>."
+    not-found: "<red>Player not found: <player>"
+    added: "<green>Added <player> to the maintenance whitelist."
+    already-added: "<yellow><player> is already on the maintenance whitelist."
+    save-failed: "<red>Unable to save the maintenance whitelist. Check the server console."
+    not-listed: "<red>Player is not on the maintenance whitelist: <player>"
+    removed: "<green>Removed <player> from the maintenance whitelist."
+    empty: "<yellow>The maintenance whitelist is empty."
+    # Available placeholder: <players>
+    list: "<gold>Maintenance whitelist: <players>"

@@ -1,0 +1,151 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate release tag
+        id: version
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Release tags must use stable SemVer in the form vMAJOR.MINOR.PATCH." >&2
+            exit 1
+          fi
+
+          tag_commit="$(git rev-list -n 1 "$GITHUB_REF_NAME")"
+          if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+            echo "Release tags must point to a commit contained in main." >&2
+            exit 1
+          fi
+
+          echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release commits
+        shell: bash
+        run: |
+          subject_pattern='^(feat|fix|perf|refactor|docs|revert|build|ci|test|style|chore)(\([^()]+\))?!?: .+'
+          previous_tag=""
+
+          if parent_commit="$(git rev-parse "$GITHUB_REF_NAME^" 2>/dev/null)"; then
+            while IFS= read -r commit; do
+              while IFS= read -r candidate; do
+                if [[ "$candidate" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+                  previous_tag="$candidate"
+                  break 2
+                fi
+              done < <(git tag --points-at "$commit")
+            done < <(git rev-list --first-parent "$parent_commit")
+          fi
+
+          commit_range="$GITHUB_REF_NAME"
+          if [[ -n "$previous_tag" ]]; then
+            commit_range="$previous_tag..$GITHUB_REF_NAME"
+          fi
+
+          invalid_subjects=0
+          while IFS= read -r subject; do
+            if [[ ! "$subject" =~ $subject_pattern ]]; then
+              echo "Commit subject does not follow the release convention: $subject" >&2
+              invalid_subjects=1
+            fi
+          done < <(git log --format='%s' "$commit_range")
+
+          if (( invalid_subjects )); then
+            exit 1
+          fi
+
+      - name: Install git-cliff
+        shell: bash
+        env:
+          GIT_CLIFF_VERSION: 2.13.1
+          GIT_CLIFF_SHA512: e716cce3a07dda41b1e370d6afbd7a59eb3d4739509fb7856aeec8da2be28c0396584e29e106141c1a1c535c1827dbc1f60417524f5cfb1da9e11f700bd00f30
+        run: |
+          archive="git-cliff-${GIT_CLIFF_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          archive_path="$RUNNER_TEMP/$archive"
+          install_dir="$RUNNER_TEMP/git-cliff"
+          download_url="https://github.com/orhun/git-cliff/releases/download/v${GIT_CLIFF_VERSION}/$archive"
+
+          curl --fail --silent --show-error --location "$download_url" --output "$archive_path"
+          echo "$GIT_CLIFF_SHA512  $archive_path" | sha512sum --check --strict
+          mkdir -p "$install_dir"
+          tar -xzf "$archive_path" --strip-components=1 -C "$install_dir"
+          test -x "$install_dir/git-cliff"
+          echo "$install_dir" >> "$GITHUB_PATH"
+
+      - name: Generate release notes
+        id: release-notes
+        shell: bash
+        run: |
+          release_notes="$RUNNER_TEMP/release-notes.md"
+          git-cliff --current --strip header --output "$release_notes"
+          if [[ ! -s "$release_notes" ]]; then
+            echo "Generated release notes are empty." >&2
+            exit 1
+          fi
+
+          echo "path=$release_notes" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+        with:
+          cache-provider: basic
+
+      - name: Build and test
+        env:
+          BUILD_VERSION: ${{ steps.version.outputs.value }}
+        run: ./gradlew clean build "-PbuildVersion=$BUILD_VERSION" --no-daemon
+
+      - name: Verify release artifact
+        id: artifact
+        env:
+          BUILD_VERSION: ${{ steps.version.outputs.value }}
+        shell: bash
+        run: |
+          jar_path="build/libs/maintenance-${BUILD_VERSION}.jar"
+          if [[ ! -f "$jar_path" ]]; then
+            echo "Release artifact not found: $jar_path" >&2
+            exit 1
+          fi
+
+          plugin_version="$(unzip -p "$jar_path" plugin.yml | sed -n "s/^version: '\(.*\)'$/\1/p")"
+          if [[ "$plugin_version" != "$BUILD_VERSION" ]]; then
+            echo "plugin.yml version '$plugin_version' does not match '$BUILD_VERSION'." >&2
+            exit 1
+          fi
+
+          echo "path=$jar_path" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JAR_PATH: ${{ steps.artifact.outputs.path }}
+          RELEASE_NOTES: ${{ steps.release-notes.outputs.path }}
+        run: gh release create "$GITHUB_REF_NAME" "$JAR_PATH" --verify-tag --notes-file "$RELEASE_NOTES" --title "$GITHUB_REF_NAME"

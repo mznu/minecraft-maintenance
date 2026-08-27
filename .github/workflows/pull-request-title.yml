@@ -1,0 +1,31 @@
+name: Pull request title
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check Conventional Commit format
+        shell: bash
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          subject_pattern='^(feat|fix|perf|refactor|docs|revert|build|ci|test|style|chore)(\([^()]+\))?!?: .+'
+
+          if [[ ! "$PR_TITLE" =~ $subject_pattern ]]; then
+            echo "Pull request titles must use Conventional Commit format." >&2
+            echo "Example: feat(schedule): add maintenance reminders" >&2
+            exit 1
+          fi

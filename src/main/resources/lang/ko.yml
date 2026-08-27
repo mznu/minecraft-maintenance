@@ -1,0 +1,73 @@
+# 한국어 기본 언어 파일. 모든 메시지 값은 MiniMessage 형식을 지원합니다.
+# 점검 모드로 접속이 차단될 때 표시되는 메시지입니다.
+maintenance:
+  # 화이트리스트에 없는 플레이어에게 표시되는 추방 사유입니다.
+  kick-message: "<red>현재 서버 점검 중입니다."
+
+# <time_until_start>에 사용되는 지역화된 기간 표시 형식입니다.
+# 값이 정확히 1이면 `one`, 그 외의 값에는 `other` 를 사용합니다. 한국어에서는 두 형태가 같습니다.
+duration:
+  # 0이 아닌 기간 구성요소 사이에 삽입되는 문자열입니다.
+  separator: " "
+  # 일 단위 템플릿입니다. 사용 가능한 placeholder: <value>.
+  day:
+    # 일 값이 1일 때 사용됩니다.
+    one: "<value>일"
+    # 그 외의 일 값에 사용됩니다.
+    other: "<value>일"
+  # 시간 단위 템플릿입니다. 사용 가능한 placeholder: <value>.
+  hour:
+    # 시간 값이 1일 때 사용됩니다.
+    one: "<value>시간"
+    # 그 외의 시간 값에 사용됩니다.
+    other: "<value>시간"
+  # 분 단위 템플릿입니다. 사용 가능한 placeholder: <value>.
+  minute:
+    # 분 값이 1일 때 사용됩니다.
+    one: "<value>분"
+    # 그 외의 분 값에 사용됩니다.
+    other: "<value>분"
+  # 초 단위 템플릿입니다. 사용 가능한 placeholder: <value>.
+  second:
+    # 초 값이 1일 때 사용됩니다.
+    one: "<value>초"
+    # 그 외의 초 값에 사용됩니다.
+    other: "<value>초"
+
+# 지역화된 예약 시간 표시와 플레이어 알림입니다.
+schedule:
+  # 예약 시간을 표시할 때 사용하는 Java DateTimeFormatter 패턴입니다.
+  display-format: "yyyy-MM-dd HH:mm z"
+  # 예약 생성 시점과 시작 전 시점에 접속 중인 플레이어에게 전송되는 메시지입니다.
+  notifications:
+    # 예약 생성 시 전송됩니다. 공백으로 두면 비활성화됩니다.
+    # 사용 가능한 placeholder: <schedule_start>, <schedule_end>.
+    scheduled-message: "<yellow>서버 점검이 <schedule_start>부터 <schedule_end>까지 예정되어 있습니다."
+    # config의 각 remind-before 시점에 전송됩니다. 공백으로 두면 비활성화됩니다.
+    # 사용 가능한 placeholder: <schedule_start>, <schedule_end>, <time_until_start>.
+    reminder-message: "<yellow>서버 점검이 <time_until_start> 후 시작됩니다."
+
+# 지역화된 멀티플레이 서버 목록 표시 내용입니다.
+server-list:
+  # 현재 점검 상태에 따라 선택되는 MOTD입니다.
+  motd:
+    # 활성 예약 없이 점검 모드를 켰을 때 사용됩니다. 공백이면 일반 MOTD를 유지합니다.
+    manual: |-
+      <red>현재 서버 점검 중입니다.
+      <gray>잠시 후 다시 접속해 주세요.
+    # 예약된 점검 진행 중 사용됩니다. 공백이면 manual 값을 사용합니다.
+    # 사용 가능한 placeholder: <schedule_start>, <schedule_end>.
+    scheduled: |-
+      <red>현재 서버 점검 중입니다.
+      <gray>점검 종료 예정: <yellow><schedule_end></yellow>
+    # 예약 시작 전 show-before 기간에 사용됩니다. 공백이면 비활성화됩니다.
+    # 사용 가능한 placeholder: <schedule_start>, <schedule_end>.
+    upcoming: |-
+      <gold>서버 점검 예정
+      <gray><schedule_start> - <schedule_end>
+  # 점검 중 플레이어 수 영역에 표시되는 문자열입니다. 공백이면 일반 인원수를 유지합니다.
+  player-count: "<red>점검 중"
+  # 플레이어 수 영역에 마우스를 올렸을 때 표시되는 줄입니다. 빈 목록이면 비활성화됩니다.
+  player-list-hover:
+    - "<red>현재 서버 점검 중입니다."
+    - "<gray>잠시 후 다시 접속해 주세요."
