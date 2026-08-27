@@ -1,0 +1,42 @@
+# Release-note configuration for git-cliff.
+# https://git-cliff.org/docs/configuration
+
+[changelog]
+header = ""
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+
+{% for commit in commits %}\
+- {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | upper_first }}\
+{% endfor %}
+{% endfor %}\
+{% if previous and previous.version and version %}\
+{{ "\n" }}**Full Changelog:** [`{{ previous.version }}...{{ version }}`](https://github.com/mznu/minecraft-maintenance/compare/{{ previous.version }}...{{ version }})
+{% endif %}
+"""
+footer = ""
+trim = true
+
+[git]
+conventional_commits = true
+require_conventional = true
+filter_unconventional = true
+commit_preprocessors = [
+    { pattern = "\\(#([0-9]+)\\)", replace = "([#${1}](https://github.com/mznu/minecraft-maintenance/pull/${1}))" },
+]
+commit_parsers = [
+    { field = "breaking", pattern = "true", group = "<!-- 0 -->Breaking Changes" },
+    { message = "^feat", group = "<!-- 1 -->Features" },
+    { message = "^fix", group = "<!-- 2 -->Bug Fixes" },
+    { message = "^perf", group = "<!-- 3 -->Performance" },
+    { message = "^refactor", group = "<!-- 4 -->Refactoring" },
+    { message = "^revert", group = "<!-- 5 -->Reverts" },
+    { message = "^(docs|build|ci|test|style|chore)", skip = true },
+]
+protect_breaking_commits = true
+filter_commits = true
+fail_on_unmatched_commit = true
+tag_pattern = "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+topo_order = false
+sort_commits = "oldest"

@@ -1,0 +1,48 @@
+# Non-localized console logs, warnings, and internal validation messages.
+# Placeholders use <name> and are inserted as plain text.
+plugin:
+  command-missing: "The maintenance command is missing from plugin.yml"
+  enabled: "Maintenance plugin enabled (maintenance mode: <enabled>)"
+  disabled: "Maintenance plugin disabled"
+  reloaded: "Maintenance configuration reloaded (maintenance mode: <enabled>)"
+  players-kicked: "Kicked <count> player(s) for maintenance mode"
+  invalid-locale: "Invalid locale '<locale>'; using '<fallback>'"
+
+language:
+  missing-message: "Missing message at '<path>' in the language files"
+  missing-message-list: "Missing message list at '<path>' in the language files"
+  unavailable: "No language files are available"
+  fallback: "No language file found for locale '<locale>'; using '<fallback>'"
+  bundled-file-missing: "Bundled language file is missing: <path>"
+
+command-messages:
+  missing-message: "Missing command message at '<path>'"
+  missing-message-list: "Missing command message list at '<path>'"
+  bundled-file-missing: "Bundled command message file is missing: <path>"
+
+command:
+  reload-failed: "Unable to reload maintenance configuration"
+  player-lookup-failed: "Unable to look up player <player>: <error>"
+  whitelist-save-failed: "Unable to save the maintenance whitelist"
+
+whitelist:
+  missing-player-name: "Ignoring maintenance whitelist entry without a player name: <entry>"
+  invalid-uuid: "Ignoring invalid UUID in maintenance whitelist: <uuid>"
+
+schedule:
+  end-before-start: "Maintenance end time must be after its start time"
+  started: "Maintenance schedule started; ending at <end>"
+  completed: "Maintenance schedule completed"
+  incomplete: "Maintenance schedule requires both starts-at and ends-at"
+  invalid-date-time: "Maintenance schedule contains an invalid ISO-8601 date-time"
+  invalid-order: "Maintenance schedule ends-at must be after starts-at"
+  end-not-future: "Maintenance schedule ends-at must be in the future"
+  invalid-reminder: "Ignoring invalid schedule notification duration: <value>"
+  notification-invalid: "Unable to parse schedule notification: <error>"
+  invalid-time-zone: "Invalid schedule time zone '<time_zone>'; using UTC"
+  invalid-display-format: "Invalid schedule display format '<format>'; using '<fallback>'"
+
+server-list:
+  invalid-upcoming-period: "Upcoming maintenance MOTD show-before is not a valid positive duration"
+  icon-missing: "Maintenance server list icon does not exist: <path>"
+  icon-load-failed: "Unable to load maintenance server list icon <path>: <error>"

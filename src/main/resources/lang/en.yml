@@ -1,0 +1,73 @@
+# English language file. All message values support MiniMessage formatting.
+# Messages shown when maintenance mode blocks a connection.
+maintenance:
+  # Kick reason shown to a non-whitelisted player.
+  kick-message: "<red>The server is currently under maintenance."
+
+# Localized duration formatting used by <time_until_start>.
+# `one` is used only when the value is exactly 1; `other` is used for every other value.
+duration:
+  # Text inserted between non-zero duration components.
+  separator: " "
+  # Day unit templates. Available placeholder: <value>.
+  day:
+    # Used when the day value is 1.
+    one: "<value> day"
+    # Used for every other day value.
+    other: "<value> days"
+  # Hour unit templates. Available placeholder: <value>.
+  hour:
+    # Used when the hour value is 1.
+    one: "<value> hour"
+    # Used for every other hour value.
+    other: "<value> hours"
+  # Minute unit templates. Available placeholder: <value>.
+  minute:
+    # Used when the minute value is 1.
+    one: "<value> minute"
+    # Used for every other minute value.
+    other: "<value> minutes"
+  # Second unit templates. Available placeholder: <value>.
+  second:
+    # Used when the second value is 1.
+    one: "<value> second"
+    # Used for every other second value.
+    other: "<value> seconds"
+
+# Localized schedule display and player notifications.
+schedule:
+  # Java DateTimeFormatter pattern used whenever schedule times are displayed.
+  display-format: "yyyy-MM-dd HH:mm z"
+  # Messages broadcast to players who are online when a schedule is created or approaches.
+  notifications:
+    # Sent when a schedule is created. Leave blank to disable.
+    # Available placeholders: <schedule_start>, <schedule_end>.
+    scheduled-message: "<yellow>Maintenance is scheduled from <schedule_start> to <schedule_end>."
+    # Sent at each configured remind-before period. Leave blank to disable.
+    # Available placeholders: <schedule_start>, <schedule_end>, <time_until_start>.
+    reminder-message: "<yellow>Maintenance begins in <time_until_start>."
+
+# Localized multiplayer server-list content.
+server-list:
+  # MOTD variants selected according to the current maintenance state.
+  motd:
+    # Used for maintenance mode without an active schedule. Leave blank to keep the normal MOTD.
+    manual: |-
+      <red>The server is currently under maintenance.
+      <gray>Please try again later.
+    # Used during scheduled maintenance; blank falls back to manual.
+    # Available placeholders: <schedule_start>, <schedule_end>.
+    scheduled: |-
+      <red>The server is currently under maintenance.
+      <gray>Maintenance ends at <yellow><schedule_end></yellow>.
+    # Used before scheduled maintenance during show-before. Leave blank to disable.
+    # Available placeholders: <schedule_start>, <schedule_end>.
+    upcoming: |-
+      <gold>Scheduled maintenance
+      <gray><schedule_start> - <schedule_end>
+  # Text shown in the player-count area during maintenance. Leave blank to keep the normal count.
+  player-count: "<red>Maintenance"
+  # Lines shown when hovering over the player-count area. Use an empty list to disable.
+  player-list-hover:
+    - "<red>The server is currently under maintenance."
+    - "<gray>Please try again later."
